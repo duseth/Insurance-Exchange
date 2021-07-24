@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 {% load crispy_forms_tags %}
+
+<!-- Header -->
 {% include "_header.html" %}
 <html lang="ru">
 <head>
@@ -7,6 +9,13 @@
     <title>Login</title>
 </head>
 <body>
+
+<!-- Login -->
+{% if user.is_authenticated %}
+<div class="container py-5">
+    <h3 class="text-center">You are logged in!</h3>
+</div>
+{% else %}
 <div class="container py-5">
     <h1>Login</h1>
     <form method="POST">
@@ -16,7 +25,9 @@
     </form>
     <p class="text-center">Don't have an account? <a href="/register">Create an account</a>.</p>
 </div>
+{% endif %}
 
+<!-- Footer -->
 {% include "_footer.html" %}
 </body>
 </html>
