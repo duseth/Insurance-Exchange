@@ -1,14 +1,17 @@
+from .models import *
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
 
 
 class RegisterForm(UserCreationForm):
-    email = forms.EmailField(required=True)
+    name = forms.CharField(max_length=200)
+    email = forms.EmailField(max_length=255, widget=forms.EmailInput)
+    phone = forms.CharField(max_length=20)
+    description = forms.Textarea()
 
     class Meta:
-        model = User
-        fields = ("username", "email", "password1", "password2")
+        model = Company
+        fields = ("name", "email", "phone", "description", "password1", "password2")
 
     def save(self, commit=True):
         user = super(RegisterForm, self).save(commit=False)
