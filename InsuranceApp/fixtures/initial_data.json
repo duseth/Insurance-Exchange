@@ -1,0 +1,100 @@
+[
+    {
+        "model": "InsuranceApp.insurancetype",
+        "pk": 1,
+        "fields": {
+            "name": "Жизнь",
+            "risks": [
+                "смерть",
+                "инвалидность",
+                "травмы",
+                "утрата трудоспособности"
+            ]
+        }
+    },
+    {
+        "model": "InsuranceApp.insurancetype",
+        "pk": 2,
+        "fields": {
+            "name": "Транспорт",
+            "risks": [
+                "угон",
+                "повреждения",
+                "природные явления"
+            ]
+        }
+    },
+    {
+        "model": "InsuranceApp.insurancetype",
+        "pk": 3,
+        "fields": {
+            "name": "Недвижимость",
+            "risks": [
+                "пожар",
+                "взрыв",
+                "авария",
+                "залив"
+            ]
+        }
+    },
+    {
+        "model": "InsuranceApp.insurancetype",
+        "pk": 4,
+        "fields": {
+            "name": "Путешествие",
+            "risks": [
+                "несчастный случай",
+                "медицинская помощь",
+                "травмы"
+            ]
+        }
+    },
+    {
+        "model": "InsuranceApp.validitytype",
+        "pk": 1,
+        "fields": {
+            "name": "1 месяц",
+            "time": 2592000.0
+        }
+    },
+    {
+        "model": "InsuranceApp.validitytype",
+        "pk": 2,
+        "fields": {
+            "name": "3 месяца",
+            "time": 7776000.0
+        }
+    },
+    {
+        "model": "InsuranceApp.validitytype",
+        "pk": 3,
+        "fields": {
+            "name": "6 месяцев",
+            "time": 15552000.0
+        }
+    },
+    {
+        "model": "InsuranceApp.validitytype",
+        "pk": 4,
+        "fields": {
+            "name": "1 год",
+            "time": 31536000.0
+        }
+    },
+    {
+        "model": "InsuranceApp.validitytype",
+        "pk": 5,
+        "fields": {
+            "name": "3 года",
+            "time": 94608000.0
+        }
+    },
+    {
+        "model": "InsuranceApp.validitytype",
+        "pk": 6,
+        "fields": {
+            "name": "5 лет",
+            "time": 157680000.0
+        }
+    }
+]
