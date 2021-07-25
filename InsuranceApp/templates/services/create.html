@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+{% load crispy_forms_tags %}
+
+<!-- Header -->
+{% include "_header.html" %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Services</title>
+</head>
+<body>
+
+<!-- Create services form -->
+<div class="container py-5">
+    <h1>Create service</h1>
+    <form method="POST">
+        {% csrf_token %}
+        {{ create_form|crispy }}
+        <button class="btn btn-primary" type="submit">Create</button>
+    </form>
+</div>
+</body>
+</html>

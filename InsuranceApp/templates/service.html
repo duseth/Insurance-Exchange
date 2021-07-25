@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+{% load crispy_forms_tags %}
+
+<!-- Header -->
+{% include "_header.html" %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ service.title }}</title>
+</head>
+<body>
+<div class="container py-5">
+    <div class="row">
+        <!-- Service info -->
+        <div class="col-sm">
+            <h4 class="font-weight-bold">{{ service.title }}</h4>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item list-group-item-success">Company: {{ service.company.name }}</li>
+                <li class="list-group-item list-group-item-info">Price: {{ service.price }}</li>
+                <li class="list-group-item list-group-item-info">Coverage amount: {{ service.coverage_amount }}</li>
+                <li class="list-group-item list-group-item-warning">Validity: {{ service.validity.name }}</li>
+                <li class="list-group-item list-group-item-warning">Type: {{ service.type.name }}</li>
+                <li class="list-group-item list-group-item-danger">Risks: {{ service.type.risks|join:", " }}</li>
+                <li class="list-group-item list-group-item-secondary">Description: {{ service.description }}</li>
+            </ul>
+        </div>
+        <!-- Response form -->
+        <div class="col-sm">
+            <form method="POST">
+                {% csrf_token %}
+                {{ response_form|crispy }}
+                <button class="btn btn-primary" type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
