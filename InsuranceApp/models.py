@@ -10,6 +10,7 @@ class Company(AbstractUser):
     description = models.TextField(null=True)
     password = models.CharField(max_length=200)
     create_date = models.DateField(auto_now_add=True)
+    username = models.CharField(max_length=30, unique=False)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["name", "phone", "password"]
@@ -29,7 +30,7 @@ class Service(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(null=True)
     type = models.ForeignKey(InsuranceType, on_delete=models.CASCADE)
-    insurance_validity = models.ForeignKey(ValidityType, on_delete=models.CASCADE)
+    validity = models.ForeignKey(ValidityType, on_delete=models.CASCADE)
     coverage_amount = models.FloatField()
     price = models.FloatField()
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
