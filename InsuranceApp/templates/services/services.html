@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<!-- Header -->
+{% include "_header.html" %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Services</title>
+</head>
+<body>
+
+<!-- Services -->
+<div class="container py-5">
+    <div>
+        <a class="btn btn-primary" href="{% url 'InsuranceApp:create_service' %}">Create service</a>
+    </div>
+
+    {% if services|length > 0 %}
+    <table class="table">
+        <thead class="thead-light">
+        <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Type</th>
+            <th scope="col">Price</th>
+            <th scope="col">Company</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for service in services %}
+        <tr>
+            <td><a href="{% url 'InsuranceApp:service' service.id %}">{{ service.title }}</a></td>
+            <td>{{ service.type.name }}</td>
+            <td>{{ service.price }}</td>
+            <td>{{ service.company.name }}</td>
+            <td><a class="btn btn-secondary" href="{% url 'InsuranceApp:update_service' service.id %}">Update</a></td>
+            <td><a class="btn btn-danger" href="{% url 'InsuranceApp:delete_service' service.id %}">Delete</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <h4>You don't have any service</h4>
+    {% endif %}
+</div>
+</body>
+</html>

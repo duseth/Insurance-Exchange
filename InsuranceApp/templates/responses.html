@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Responses</title>
+    {% include "_header.html" %}
+</head>
+<body>
+<div class="container py-5">
+    {% if responses|length > 0 %}
+    <h5 class="font-weight-bold">Found {{ responses|length }} responses</h5>
+    <table class="table">
+        <thead class="thead-light">
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Phone</th>
+            <th scope="col">Birth Date</th>
+            <th scope="col">Date</th>
+            <th scope="col">Service</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for response in responses %}
+        <tr>
+            <td>{{ response.full_name }}</td>
+            <td>{{ response.email }}</td>
+            <td>{{ response.phone }}</td>
+            <td>{{ response.birth_date }}</td>
+            <td>{{ response.response_date }}</td>
+            <td><a href="{% url 'InsuranceApp:service' response.service.id %}">{{ response.service.title }}</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <h4>There are no responses at the moment</h4>
+    {% endif %}
+</div>
+</body>
+</html>
