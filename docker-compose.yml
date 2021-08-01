@@ -12,14 +12,30 @@ services:
       - ./.env.dev
     depends_on:
       - db
+      - rabbit
   db:
     image: postgres:12.0-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_USER=insurance
-      - POSTGRES_PASSWORD=insurance-pwd
-      - POSTGRES_DB=insurance
+    env_file:
+      - ./.env.dev
+  rabbit:
+    restart: always
+    image: rabbitmq:3-management
+    ports:
+      - 15672:15672
+  celery:
+    restart: always
+    build: .
+    command: celery -A InsuranceExchange worker --loglevel=info --concurrency=5
+    volumes:
+      - .:/insurance
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - db
+      - rabbit
+      - web
 
 volumes:
   postgres_data:
