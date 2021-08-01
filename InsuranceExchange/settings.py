@@ -136,6 +136,11 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "InsuranceApp.Company"
 
 # Custom message tags for Bootstrap
+
 MESSAGE_TAGS = {
     messages.ERROR: "danger"
 }
+
+# Celery configuration
+
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "amqp://localhost")
