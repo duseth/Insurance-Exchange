@@ -9,7 +9,7 @@ services:
     ports:
       - 8000:8000
     env_file:
-      - ./.env.dev
+      - .env
     depends_on:
       - db
       - rabbit
@@ -18,7 +18,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
-      - ./.env.dev
+      - .env
   rabbit:
     restart: always
     image: rabbitmq:3-management
@@ -31,7 +31,7 @@ services:
     volumes:
       - .:/insurance
     env_file:
-      - ./.env.dev
+      - .env
     depends_on:
       - db
       - rabbit
