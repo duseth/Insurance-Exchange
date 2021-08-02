@@ -3,12 +3,11 @@
         "model": "InsuranceApp.insurancetype",
         "pk": 1,
         "fields": {
-            "name": "Жизнь",
+            "name": "Life",
             "risks": [
-                "смерть",
-                "инвалидность",
-                "травмы",
-                "утрата трудоспособности"
+                "death",
+                "disability",
+                "trauma"
             ]
         }
     },
@@ -16,11 +15,11 @@
         "model": "InsuranceApp.insurancetype",
         "pk": 2,
         "fields": {
-            "name": "Транспорт",
+            "name": "Transport",
             "risks": [
-                "угон",
-                "повреждения",
-                "природные явления"
+                "hijacking",
+                "damage",
+                "natural phenomena"
             ]
         }
     },
@@ -28,12 +27,11 @@
         "model": "InsuranceApp.insurancetype",
         "pk": 3,
         "fields": {
-            "name": "Недвижимость",
+            "name": "Real estate",
             "risks": [
-                "пожар",
-                "взрыв",
-                "авария",
-                "залив"
+                "fire",
+                "explosion",
+                "accident"
             ]
         }
     },
@@ -41,11 +39,11 @@
         "model": "InsuranceApp.insurancetype",
         "pk": 4,
         "fields": {
-            "name": "Путешествие",
+            "name": "Travel",
             "risks": [
-                "несчастный случай",
-                "медицинская помощь",
-                "травмы"
+                "accident",
+                "health care",
+                "trauma"
             ]
         }
     },
@@ -53,7 +51,7 @@
         "model": "InsuranceApp.validitytype",
         "pk": 1,
         "fields": {
-            "name": "1 месяц",
+            "name": "1 month",
             "time": 2592000.0
         }
     },
@@ -61,7 +59,7 @@
         "model": "InsuranceApp.validitytype",
         "pk": 2,
         "fields": {
-            "name": "3 месяца",
+            "name": "3 months",
             "time": 7776000.0
         }
     },
@@ -69,7 +67,7 @@
         "model": "InsuranceApp.validitytype",
         "pk": 3,
         "fields": {
-            "name": "6 месяцев",
+            "name": "6 months",
             "time": 15552000.0
         }
     },
@@ -77,7 +75,7 @@
         "model": "InsuranceApp.validitytype",
         "pk": 4,
         "fields": {
-            "name": "1 год",
+            "name": "1 year",
             "time": 31536000.0
         }
     },
@@ -85,7 +83,7 @@
         "model": "InsuranceApp.validitytype",
         "pk": 5,
         "fields": {
-            "name": "3 года",
+            "name": "3 years",
             "time": 94608000.0
         }
     },
@@ -93,7 +91,7 @@
         "model": "InsuranceApp.validitytype",
         "pk": 6,
         "fields": {
-            "name": "5 лет",
+            "name": "5 years",
             "time": 157680000.0
         }
     }
