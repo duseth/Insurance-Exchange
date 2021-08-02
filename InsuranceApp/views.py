@@ -1,6 +1,7 @@
-from .tasks import *
-from .forms import *
-from .models import *
+from .tasks import send_response_notification
+from .models import Company, Service, Response
+from .forms import RegisterForm, UpdateUserForm, ServiceForm, ResponseForm
+
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.http import HttpRequest, HttpResponse
@@ -71,7 +72,7 @@ def logout_user(request: HttpRequest) -> HttpResponse:
 @login_required(login_url="/login")
 def update_user(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
-        update_form = UpdateProfileForm(request.POST, instance=request.user)
+        update_form = UpdateUserForm(request.POST, instance=request.user)
         update_form.actual_user = request.user
 
         if update_form.is_valid():
@@ -80,7 +81,7 @@ def update_user(request: HttpRequest) -> HttpResponse:
 
             return render(request, "company/update.html", {"update_form": update_form})
     else:
-        update_form = UpdateProfileForm(instance=request.user)
+        update_form = UpdateUserForm(instance=request.user)
 
     return render(request, "company/update.html", {"update_form": update_form})
 

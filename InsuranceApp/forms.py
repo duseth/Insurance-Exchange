@@ -1,7 +1,8 @@
-from .models import *
 from django import forms
 from datetime import date
 from django.contrib.auth.forms import UserCreationForm
+
+from .models import Company, Service, Response, ValidityType, InsuranceType
 
 
 class RegisterForm(UserCreationForm):
@@ -22,7 +23,7 @@ class RegisterForm(UserCreationForm):
         return user
 
 
-class UpdateProfileForm(forms.ModelForm):
+class UpdateUserForm(forms.ModelForm):
     name = forms.CharField(max_length=200)
     email = forms.EmailField(max_length=255, widget=forms.EmailInput, disabled=True)
     phone = forms.CharField(max_length=20)
