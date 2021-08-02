@@ -1,3 +1,4 @@
+from .tasks import *
 from .forms import *
 from .models import *
 from django.contrib import messages
@@ -151,6 +152,15 @@ def service_response(request: HttpRequest, service_id: int) -> HttpResponse:
             response.service = Service.objects.get(pk=service_id)
             response.company = response.service.company
             response.save()
+
+            send_response_notification.delay({
+                "company": response.company.email,
+                "service": response.service.title,
+                "full_name": response.full_name,
+                "email": response.email,
+                "phone": response.phone,
+                "response_date": response.response_date
+            })
 
             messages.success(request, f"Response to {response.company.name} successful created.")
             return redirect("InsuranceApp:index")
