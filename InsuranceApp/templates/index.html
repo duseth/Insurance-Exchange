@@ -1,12 +1,63 @@
 <!DOCTYPE html>
+<!-- Header -->
+{% include "_header.html" %}
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Insurance Exchange</title>
-    {% include "_header.html" %}
 </head>
 <body>
 <div class="container py-5">
+    <!-- Search -->
+    <form class="form-inline" method="GET">
+        <label class="sr-only" for="query">Search</label>
+        <input type="text" class="col-8 input-group mb-2 mr-sm-2" id="query" name="query" placeholder="Search"
+               value="{{ query }}">
+        <button type="submit" class="col-3 btn btn-light mb-2">Search</button>
+
+        <label class="sr-only" for="type">Type</label>
+        <select class="form-control mb-2 mr-sm-2" id="type" name="type" onchange="this.form.submit()">
+            {% if type == None %}
+            <option disabled selected value style="display:none">Type</option>
+            {% endif %}
+            {% for value, name in types %}
+            {% if value == type %}
+            <option value="{{ value }}" selected>{{ name }}</option>
+            {% else %}
+            <option value="{{ value }}">{{ name }}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+
+        <label class="sr-only" for="validity">Validity</label>
+        <select class="form-control mb-2 mr-sm-2" id="validity" name="validity" onchange="this.form.submit()">
+            {% if validity == None %}
+            <option disabled selected value style="display:none">Validity</option>
+            {% endif %}
+            {% for value, name in validities %}
+            {% if value == validity %}
+            <option value="{{ value }}" selected>{{ name }}</option>
+            {% else %}
+            <option value="{{ value }}">{{ name }}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+
+        <label class="sr-only" for="company">Company</label>
+        <select class="form-control mb-2 mr-sm-2" id="company" name="company" onchange="this.form.submit()">
+            {% if company == None %}
+            <option disabled selected value style="display:none">Company</option>
+            {% endif %}
+            {% for value, name in companies %}
+            {% if value == company %}
+            <option value="{{ value }}" selected>{{ name }}</option>
+            {% else %}
+            <option value="{{ value }}">{{ name }}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+    </form>
+    <!-- Services -->
     {% if services|length > 0 %}
     <h5 class="font-weight-bold">Found {{ services|length }} services</h5>
     <table class="table">

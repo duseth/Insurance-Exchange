@@ -1,11 +1,13 @@
 <!DOCTYPE html>
+<!-- Header -->
+{% include "_header.html" %}
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Responses</title>
-    {% include "_header.html" %}
 </head>
 <body>
+<!--Responses-->
 <div class="container py-5">
     {% if responses|length > 0 %}
     <h5 class="font-weight-bold">Found {{ responses|length }} responses</h5>

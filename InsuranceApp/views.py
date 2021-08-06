@@ -1,6 +1,11 @@
-from .tasks import *
-from .forms import *
-from .models import *
+from typing import Optional, List
+from elasticsearch_dsl.query import MultiMatch
+
+from .documents import ServiceDocument
+from .tasks import send_response_notification
+from .forms import RegisterForm, UpdateUserForm, ServiceForm, ResponseForm
+from .models import Company, Service, Response, InsuranceType, ValidityType
+
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.http import HttpRequest, HttpResponse
@@ -10,10 +15,51 @@ from django.contrib.auth import login, authenticate, logout
 
 
 def index(request: HttpRequest) -> HttpResponse:
-    return render(request, "index.html", {"services": Service.objects.all()})
+    """Index view handler responsible to get 'service' objects by query and filters"""
+    query: str = request.GET.get("query")
+    type_id, validity_id, company_id = __get_request_parameters(
+        request.GET.get("type"),
+        request.GET.get("validity"),
+        request.GET.get("company")
+    )
+
+    services = ServiceDocument.search()
+
+    if (query is not None) and (query != ""):
+        services = services.query(MultiMatch(
+            query=query,
+            fields=["title", "description", "type.name", "type.risks", "validity.name", "company.name",
+                    "company.description", "company.phone"]
+        ))
+
+    if type_id is not None:
+        services = services.filter("term", **{"type.id": type_id})
+
+    if validity_id is not None:
+        services = services.filter("term", **{"validity.id": validity_id})
+
+    if company_id is not None:
+        services = services.filter("term", **{"company.id": company_id})
+
+    return render(request, "index.html", {
+        "type": type_id,
+        "company": company_id,
+        "validity": validity_id,
+        "services": services.to_queryset(),
+        "query": query if query is not None else "",
+        "companies": Company.objects.values_list("pk", "name"),
+        "types": InsuranceType.objects.values_list("pk", "name"),
+        "validities": ValidityType.objects.values_list("pk", "name")
+    })
+
+
+def __get_request_parameters(*args: str) -> List[Optional[int]]:
+    """Function that convert a string parameters to an integer"""
+    return [int(arg) if arg is not None else None for arg in args]
 
 
 def register_user(request: HttpRequest) -> HttpResponse:
+    """Register user view handler responsible for registration user in system"""
     if request.user.is_authenticated:
         messages.info(request, "You are now logged in.")
         return redirect("InsuranceApp:index")
@@ -36,6 +82,7 @@ def register_user(request: HttpRequest) -> HttpResponse:
 
 
 def login_user(request: HttpRequest) -> HttpResponse:
+    """Login user view handler responsible for login in system"""
     if request.user.is_authenticated:
         messages.info(request, "You are now logged in.")
         return redirect("InsuranceApp:index")
@@ -63,6 +110,7 @@ def login_user(request: HttpRequest) -> HttpResponse:
 
 @login_required(login_url="/login")
 def logout_user(request: HttpRequest) -> HttpResponse:
+    """Login logout view handler responsible for logout from system"""
     logout(request)
     messages.info(request, "You have successfully logged out.")
     return redirect("InsuranceApp:index")
@@ -70,8 +118,9 @@ def logout_user(request: HttpRequest) -> HttpResponse:
 
 @login_required(login_url="/login")
 def update_user(request: HttpRequest) -> HttpResponse:
+    """Update user view handler responsible for update user object"""
     if request.method == "POST":
-        update_form = UpdateProfileForm(request.POST, instance=request.user)
+        update_form = UpdateUserForm(request.POST, instance=request.user)
         update_form.actual_user = request.user
 
         if update_form.is_valid():
@@ -80,23 +129,28 @@ def update_user(request: HttpRequest) -> HttpResponse:
 
             return render(request, "company/update.html", {"update_form": update_form})
     else:
-        update_form = UpdateProfileForm(instance=request.user)
+        update_form = UpdateUserForm(instance=request.user)
 
     return render(request, "company/update.html", {"update_form": update_form})
 
 
 @login_required(login_url="/login")
 def get_services(request: HttpRequest) -> HttpResponse:
-    return render(request, "services/services.html", {"services": Service.objects.filter(company=request.user)})
+    """Services view handler responsible for 'service' objects dispatching from 'company'"""
+    return render(request, "services/services.html", {
+        "services": ServiceDocument.search().filter("term", **{"company.id": request.user.id}).to_queryset()
+    })
 
 
 @login_required(login_url="/login")
 def get_responses(request: HttpRequest) -> HttpResponse:
+    """Responses view handler responsible for 'response' objects dispatching from 'company'"""
     return render(request, "responses.html", {"responses": Response.objects.filter(company=request.user)})
 
 
 @login_required(login_url="/login")
 def create_service(request: HttpRequest) -> HttpResponse:
+    """Create service view handler responsible for creating 'service' object"""
     if request.method == "POST":
         create_form = ServiceForm(request.POST)
 
@@ -117,6 +171,7 @@ def create_service(request: HttpRequest) -> HttpResponse:
 
 @login_required(login_url="/login")
 def update_service(request: HttpRequest, service_id: int) -> HttpResponse:
+    """Update service view handler responsible for updating 'service' object"""
     service = Service.objects.get(pk=service_id)
 
     if request.method == "POST":
@@ -137,6 +192,7 @@ def update_service(request: HttpRequest, service_id: int) -> HttpResponse:
 
 @login_required(login_url="/login")
 def delete_service(request: HttpRequest, service_id: int) -> HttpResponse:
+    """Delete service view handler responsible for deleting 'service' object"""
     Service.objects.get(pk=service_id).delete()
     messages.success(request, "Service successful deleted.")
 
@@ -144,6 +200,9 @@ def delete_service(request: HttpRequest, service_id: int) -> HttpResponse:
 
 
 def service_response(request: HttpRequest, service_id: int) -> HttpResponse:
+    """Service response view handler responsible for:
+        GET: return 'service' details
+        POST: create 'response' object and Celery notification task"""
     if request.method == "POST":
         response_form = ResponseForm(request.POST)
 
@@ -154,11 +213,11 @@ def service_response(request: HttpRequest, service_id: int) -> HttpResponse:
             response.save()
 
             send_response_notification.delay({
-                "company": response.company.email,
-                "service": response.service.title,
-                "full_name": response.full_name,
                 "email": response.email,
                 "phone": response.phone,
+                "full_name": response.full_name,
+                "company": response.company.email,
+                "service": response.service.title,
                 "response_date": response.response_date
             })
 

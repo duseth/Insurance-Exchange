@@ -1,3 +1,9 @@
+"""
+Celery config for InsuranceExchange project.
+
+It exposes the Celery callable as a module-level variable named ``celery_app``.
+"""
+
 import os
 from celery import Celery
 

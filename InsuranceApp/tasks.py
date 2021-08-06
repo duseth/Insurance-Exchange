@@ -6,12 +6,13 @@ from InsuranceExchange.celery import celery_app
 
 @celery_app.task
 def send_response_notification(response: dict) -> None:
+    """Task method for Celery application, that send response notification from client to 'company'"""
     params = {
         "format": "json",
         "api_key": os.getenv("UNISENDER_KEY", "api_key"),
         "email": response["company"],
-        "sender_name": "SimbirInsurance",
-        "sender_email": "simbir-insurance@yandex.ru",
+        "sender_name": os.getenv("COMPANY_NAME", "name"),
+        "sender_email": os.getenv("COMPANY_EMAIL", "email"),
         "subject": f"You have new response for «{response['service']}»",
         "body": f"<h4>You have new response for «{response['service']}»</h4>"
                 f"<table><tbody>"
