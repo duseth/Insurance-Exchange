@@ -11,6 +11,7 @@ Exchange of insurance companies to attract new customers
 * **PostgreSQL** (database)
 * **RabbitMQ** (message broker)
 * **Celery** (task queue)
+* **Elasticsearch** (search engine)
 ***
 ## Quickstart
 #### 1. Create `.env` environment file in root directory
@@ -38,4 +39,6 @@ Exchange of insurance companies to attract new customers
      * `UNISENDER_KEY`
      * `COMPANY_NAME`
      * `COMPANY_EMAIL`
+   * **Elasticsearch**
+     * `ELASTICSEARCH_HOST`
 #### 3. Run `docker-compose up --build`
