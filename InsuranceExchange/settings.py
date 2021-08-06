@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "InsuranceApp",
-    "crispy_forms"
+    "crispy_forms",
+    "django_elasticsearch_dsl"
 ]
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
@@ -144,3 +145,11 @@ MESSAGE_TAGS = {
 # Celery configuration
 
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "amqp://localhost")
+
+# Elasticsearch configuration
+
+ELASTICSEARCH_DSL = {
+    "default": {
+        "hosts": os.getenv("ELASTICSEARCH_HOST", "localhost:9200")
+    }
+}
