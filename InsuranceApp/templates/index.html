@@ -1,12 +1,14 @@
 <!DOCTYPE html>
+<!-- Header -->
+{% include "_header.html" %}
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Insurance Exchange</title>
-    {% include "_header.html" %}
 </head>
 <body>
 <div class="container py-5">
+    <!-- Search -->
     <form class="form-inline" method="GET">
         <label class="sr-only" for="query">Search</label>
         <input type="text" class="col-8 input-group mb-2 mr-sm-2" id="query" name="query" placeholder="Search"
@@ -55,6 +57,7 @@
             {% endfor %}
         </select>
     </form>
+    <!-- Services -->
     {% if services|length > 0 %}
     <h5 class="font-weight-bold">Found {{ services|length }} services</h5>
     <table class="table">
