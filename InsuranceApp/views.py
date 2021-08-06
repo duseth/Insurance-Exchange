@@ -1,6 +1,10 @@
+from typing import Optional, List
+from elasticsearch_dsl.query import MultiMatch
+
+from .documents import ServiceDocument
 from .tasks import send_response_notification
-from .models import Company, Service, Response
 from .forms import RegisterForm, UpdateUserForm, ServiceForm, ResponseForm
+from .models import Company, Service, Response, InsuranceType, ValidityType
 
 from django.contrib import messages
 from django.shortcuts import render, redirect
@@ -11,7 +15,45 @@ from django.contrib.auth import login, authenticate, logout
 
 
 def index(request: HttpRequest) -> HttpResponse:
-    return render(request, "index.html", {"services": Service.objects.all()})
+    query: str = request.GET.get("query")
+    type_id, validity_id, company_id = __get_request_parameters(
+        request.GET.get("type"),
+        request.GET.get("validity"),
+        request.GET.get("company")
+    )
+
+    services = ServiceDocument.search()
+
+    if (query is not None) and (query != ""):
+        services = services.query(MultiMatch(
+            query=query,
+            fields=["title", "description", "type.name", "type.risks", "validity.name", "company.name",
+                    "company.description", "company.phone"]
+        ))
+
+    if type_id is not None:
+        services = services.filter("term", **{"type.id": type_id})
+
+    if validity_id is not None:
+        services = services.filter("term", **{"validity.id": validity_id})
+
+    if company_id is not None:
+        services = services.filter("term", **{"company.id": company_id})
+
+    return render(request, "index.html", {
+        "type": type_id,
+        "company": company_id,
+        "validity": validity_id,
+        "services": services.to_queryset(),
+        "query": query if query is not None else "",
+        "companies": Company.objects.values_list("pk", "name"),
+        "types": InsuranceType.objects.values_list("pk", "name"),
+        "validities": ValidityType.objects.values_list("pk", "name")
+    })
+
+
+def __get_request_parameters(*args: str) -> List[Optional[int]]:
+    return [int(arg) if arg is not None else None for arg in args]
 
 
 def register_user(request: HttpRequest) -> HttpResponse:
@@ -88,7 +130,9 @@ def update_user(request: HttpRequest) -> HttpResponse:
 
 @login_required(login_url="/login")
 def get_services(request: HttpRequest) -> HttpResponse:
-    return render(request, "services/services.html", {"services": Service.objects.filter(company=request.user)})
+    return render(request, "services/services.html", {
+        "services": ServiceDocument.search().filter("term", **{"company.id": request.user.id}).to_queryset()
+    })
 
 
 @login_required(login_url="/login")
@@ -155,11 +199,11 @@ def service_response(request: HttpRequest, service_id: int) -> HttpResponse:
             response.save()
 
             send_response_notification.delay({
-                "company": response.company.email,
-                "service": response.service.title,
-                "full_name": response.full_name,
                 "email": response.email,
                 "phone": response.phone,
+                "full_name": response.full_name,
+                "company": response.company.email,
+                "service": response.service.title,
                 "response_date": response.response_date
             })
 
