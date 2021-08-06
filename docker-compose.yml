@@ -3,7 +3,9 @@ version: "3"
 services:
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: sh -c "python manage.py migrate &&
+                    python manage.py loaddata initial_data.json &&
+                    python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/insurance
     ports:
@@ -11,19 +13,30 @@ services:
     env_file:
       - .env
     depends_on:
-      - db
-      - rabbit
+      db:
+        condition: service_healthy
+      rabbit:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+
   db:
     image: postgres:12.0-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
       - .env
+    healthcheck:
+      test: pg_isready
+
   rabbit:
     restart: always
     image: rabbitmq:3-management
     ports:
       - 15672:15672
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+
   celery:
     restart: always
     build: .
@@ -33,9 +46,22 @@ services:
     env_file:
       - .env
     depends_on:
-      - db
-      - rabbit
-      - web
+      db:
+        condition: service_started
+      web:
+        condition: service_started
+      rabbit:
+        condition: service_healthy
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.4
+    environment:
+      - discovery.type=single-node
+    ports:
+      - 9200:9200
+    healthcheck:
+      test: curl --silent --fail localhost:9200/_cluster/health
+    mem_limit: 1g
 
 volumes:
   postgres_data:
