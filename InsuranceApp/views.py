@@ -15,6 +15,7 @@ from django.contrib.auth import login, authenticate, logout
 
 
 def index(request: HttpRequest) -> HttpResponse:
+    """Index view handler responsible to get 'service' objects by query and filters"""
     query: str = request.GET.get("query")
     type_id, validity_id, company_id = __get_request_parameters(
         request.GET.get("type"),
@@ -53,10 +54,12 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 def __get_request_parameters(*args: str) -> List[Optional[int]]:
+    """Function that convert a string parameters to an integer"""
     return [int(arg) if arg is not None else None for arg in args]
 
 
 def register_user(request: HttpRequest) -> HttpResponse:
+    """Register user view handler responsible for registration user in system"""
     if request.user.is_authenticated:
         messages.info(request, "You are now logged in.")
         return redirect("InsuranceApp:index")
@@ -79,6 +82,7 @@ def register_user(request: HttpRequest) -> HttpResponse:
 
 
 def login_user(request: HttpRequest) -> HttpResponse:
+    """Login user view handler responsible for login in system"""
     if request.user.is_authenticated:
         messages.info(request, "You are now logged in.")
         return redirect("InsuranceApp:index")
@@ -106,6 +110,7 @@ def login_user(request: HttpRequest) -> HttpResponse:
 
 @login_required(login_url="/login")
 def logout_user(request: HttpRequest) -> HttpResponse:
+    """Login logout view handler responsible for logout from system"""
     logout(request)
     messages.info(request, "You have successfully logged out.")
     return redirect("InsuranceApp:index")
@@ -113,6 +118,7 @@ def logout_user(request: HttpRequest) -> HttpResponse:
 
 @login_required(login_url="/login")
 def update_user(request: HttpRequest) -> HttpResponse:
+    """Update user view handler responsible for update user object"""
     if request.method == "POST":
         update_form = UpdateUserForm(request.POST, instance=request.user)
         update_form.actual_user = request.user
@@ -130,6 +136,7 @@ def update_user(request: HttpRequest) -> HttpResponse:
 
 @login_required(login_url="/login")
 def get_services(request: HttpRequest) -> HttpResponse:
+    """Services view handler responsible for 'service' objects dispatching from 'company'"""
     return render(request, "services/services.html", {
         "services": ServiceDocument.search().filter("term", **{"company.id": request.user.id}).to_queryset()
     })
@@ -137,11 +144,13 @@ def get_services(request: HttpRequest) -> HttpResponse:
 
 @login_required(login_url="/login")
 def get_responses(request: HttpRequest) -> HttpResponse:
+    """Responses view handler responsible for 'response' objects dispatching from 'company'"""
     return render(request, "responses.html", {"responses": Response.objects.filter(company=request.user)})
 
 
 @login_required(login_url="/login")
 def create_service(request: HttpRequest) -> HttpResponse:
+    """Create service view handler responsible for creating 'service' object"""
     if request.method == "POST":
         create_form = ServiceForm(request.POST)
 
@@ -162,6 +171,7 @@ def create_service(request: HttpRequest) -> HttpResponse:
 
 @login_required(login_url="/login")
 def update_service(request: HttpRequest, service_id: int) -> HttpResponse:
+    """Update service view handler responsible for updating 'service' object"""
     service = Service.objects.get(pk=service_id)
 
     if request.method == "POST":
@@ -182,6 +192,7 @@ def update_service(request: HttpRequest, service_id: int) -> HttpResponse:
 
 @login_required(login_url="/login")
 def delete_service(request: HttpRequest, service_id: int) -> HttpResponse:
+    """Delete service view handler responsible for deleting 'service' object"""
     Service.objects.get(pk=service_id).delete()
     messages.success(request, "Service successful deleted.")
 
@@ -189,6 +200,9 @@ def delete_service(request: HttpRequest, service_id: int) -> HttpResponse:
 
 
 def service_response(request: HttpRequest, service_id: int) -> HttpResponse:
+    """Service response view handler responsible for:
+        GET: return 'service' details
+        POST: create 'response' object and Celery notification task"""
     if request.method == "POST":
         response_form = ResponseForm(request.POST)
 

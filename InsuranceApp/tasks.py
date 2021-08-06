@@ -6,6 +6,7 @@ from InsuranceExchange.celery import celery_app
 
 @celery_app.task
 def send_response_notification(response: dict) -> None:
+    """Task method for Celery application, that send response notification from client to 'company'"""
     params = {
         "format": "json",
         "api_key": os.getenv("UNISENDER_KEY", "api_key"),
