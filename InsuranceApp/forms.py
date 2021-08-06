@@ -39,8 +39,8 @@ class ServiceForm(forms.ModelForm):
     price = forms.FloatField()
     coverage_amount = forms.FloatField()
     description = forms.Textarea()
-    type = forms.ChoiceField(widget=forms.Select, choices=InsuranceType.objects.all().values_list("pk", "name"))
-    validity = forms.ChoiceField(widget=forms.Select, choices=ValidityType.objects.all().values_list("pk", "name"))
+    type = forms.ChoiceField(widget=forms.Select, choices=InsuranceType.objects.values_list("pk", "name"))
+    validity = forms.ChoiceField(widget=forms.Select, choices=ValidityType.objects.values_list("pk", "name"))
 
     class Meta:
         model = Service
