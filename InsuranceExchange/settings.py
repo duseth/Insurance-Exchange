@@ -153,3 +153,8 @@ ELASTICSEARCH_DSL = {
         "hosts": os.getenv("ELASTICSEARCH_HOST", "localhost:9200")
     }
 }
+
+# Redis server configuration
+
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+REDIS_PORT = os.getenv("REDIS_PORT", 6379)
