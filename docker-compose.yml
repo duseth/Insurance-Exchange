@@ -19,6 +19,8 @@ services:
         condition: service_healthy
       elasticsearch:
         condition: service_healthy
+      redis:
+        condition: service_healthy
 
   db:
     image: postgres:12.0-alpine
@@ -52,6 +54,11 @@ services:
         condition: service_started
       rabbit:
         condition: service_healthy
+
+  redis:
+    image: redis:alpine
+    healthcheck:
+      test: redis-cli ping
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.13.4
