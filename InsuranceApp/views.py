@@ -1,3 +1,4 @@
+from redis import StrictRedis
 from typing import Optional, List
 from elasticsearch_dsl.query import MultiMatch
 
@@ -6,12 +7,16 @@ from .tasks import send_response_notification
 from .forms import RegisterForm, UpdateUserForm, ServiceForm, ResponseForm
 from .models import Company, Service, Response, InsuranceType, ValidityType
 
+from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.http import HttpRequest, HttpResponse
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate, logout
+
+
+redis = StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0)
 
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -158,6 +163,8 @@ def create_service(request: HttpRequest) -> HttpResponse:
             service = create_form.save(commit=False)
             service.company = request.user
             service.save()
+
+            redis.set(f"services/{service.id}", 0)
             messages.success(request, "Service successful created.")
 
             return redirect("InsuranceApp:services")
@@ -194,6 +201,8 @@ def update_service(request: HttpRequest, service_id: int) -> HttpResponse:
 def delete_service(request: HttpRequest, service_id: int) -> HttpResponse:
     """Delete service view handler responsible for deleting 'service' object"""
     Service.objects.get(pk=service_id).delete()
+
+    redis.delete(f"services/{service_id}")
     messages.success(request, "Service successful deleted.")
 
     return redirect("InsuranceApp:services")
@@ -226,9 +235,11 @@ def service_response(request: HttpRequest, service_id: int) -> HttpResponse:
         else:
             messages.error(request, "Unsuccessful response creation. Invalid information.")
     else:
+        redis.incr(f"services/{service_id}")
         response_form = ResponseForm()
 
     return render(request, "service.html", {
         "service": Service.objects.get(pk=service_id),
+        "views": int(redis.get(f"services/{service_id}")) if request.user.is_authenticated else None,
         "response_form": response_form
     })
