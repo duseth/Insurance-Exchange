@@ -14,6 +14,9 @@
         <!-- Service info -->
         <div class="col-sm">
             <h4 class="font-weight-bold">{{ service.title }}</h4>
+            {% if views != None %}
+            <h6 class="text-muted">{{ views }} views</h6>
+            {% endif %}
             <ul class="list-group list-group-flush">
                 <li class="list-group-item list-group-item-success">Company: {{ service.company.name }}</li>
                 <li class="list-group-item list-group-item-info">Price: {{ service.price }}</li>
