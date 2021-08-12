@@ -1,7 +1,17 @@
 import os
 import requests
 
+from redis import StrictRedis
+from django.conf import settings
+from celery.signals import celeryd_after_setup
 from InsuranceExchange.celery import celery_app
+
+
+@celeryd_after_setup.connect
+def configure_redis(*args, **kwargs) -> None:
+    """Task method for Celery application, that forces Redis instance to take a snapshot of all the data."""
+    redis = StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0)
+    redis.save()
 
 
 @celery_app.task
