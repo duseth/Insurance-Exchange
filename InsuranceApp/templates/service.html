@@ -10,21 +10,21 @@
 </head>
 <body>
 <div class="container py-5">
+    <h4 class="font-weight-bold">{{ service.title }}</h4>
+    {% if views != None %}
+    <h6 class="text-muted">{{ views }} views</h6>
+    {% endif %}
     <div class="row">
         <!-- Service info -->
         <div class="col-sm">
-            <h4 class="font-weight-bold">{{ service.title }}</h4>
-            {% if views != None %}
-            <h6 class="text-muted">{{ views }} views</h6>
-            {% endif %}
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item list-group-item-success">Company: {{ service.company.name }}</li>
-                <li class="list-group-item list-group-item-info">Price: {{ service.price }}</li>
-                <li class="list-group-item list-group-item-info">Coverage amount: {{ service.coverage_amount }}</li>
-                <li class="list-group-item list-group-item-warning">Validity: {{ service.validity.name }}</li>
-                <li class="list-group-item list-group-item-warning">Type: {{ service.type.name }}</li>
-                <li class="list-group-item list-group-item-danger">Risks: {{ service.type.risks|join:", " }}</li>
-                <li class="list-group-item list-group-item-secondary">Description: {{ service.description }}</li>
+            <ul class="list-group">
+                <li class="list-group-item">Company: {{ service.company.name }}</li>
+                <li class="list-group-item">Price: {{ service.price }}</li>
+                <li class="list-group-item">Coverage amount: {{ service.coverage_amount }}</li>
+                <li class="list-group-item">Validity: {{ service.validity.name }}</li>
+                <li class="list-group-item">Type: {{ service.type.name }}</li>
+                <li class="list-group-item">Risks: {{ service.type.risks|join:", " }}</li>
+                <li class="list-group-item">Description: {{ service.description }}</li>
             </ul>
         </div>
         <!-- Response form -->
