@@ -12,7 +12,7 @@
     <form class="form-inline" method="GET">
         <label class="sr-only" for="query">Search</label>
         <input type="text" class="col-8 input-group mb-2 mr-sm-2" id="query" name="query" placeholder="Search"
-               value="{{ query }}">
+               value="{{ query|default_if_none:'' }}">
         <button type="submit" class="col-3 btn btn-light mb-2">Search</button>
 
         <label class="sr-only" for="type">Type</label>
@@ -21,7 +21,7 @@
             <option disabled selected value style="display:none">Type</option>
             {% endif %}
             {% for value, name in types %}
-            {% if value == type %}
+            {% if value == request.GET.type|add:"0" %}
             <option value="{{ value }}" selected>{{ name }}</option>
             {% else %}
             <option value="{{ value }}">{{ name }}</option>
@@ -35,7 +35,7 @@
             <option disabled selected value style="display:none">Validity</option>
             {% endif %}
             {% for value, name in validities %}
-            {% if value == validity %}
+            {% if value == request.GET.validity|add:"0" %}
             <option value="{{ value }}" selected>{{ name }}</option>
             {% else %}
             <option value="{{ value }}">{{ name }}</option>
@@ -49,7 +49,7 @@
             <option disabled selected value style="display:none">Company</option>
             {% endif %}
             {% for value, name in companies %}
-            {% if value == company %}
+            {% if value == request.GET.company|add:"0" %}
             <option value="{{ value }}" selected>{{ name }}</option>
             {% else %}
             <option value="{{ value }}">{{ name }}</option>
