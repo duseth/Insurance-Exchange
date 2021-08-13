@@ -9,7 +9,7 @@ Exchange of insurance companies to attract new customers
 ## Technology Stack
 * **Django** (backend) / Django Templates (frontend)
 * **PostgreSQL** (database)
-* **RabbitMQ** (message broker)
+* **Redis** (message broker / noSQL)
 * **Celery** (task queue)
 * **Elasticsearch** (search engine)
 ***
@@ -24,21 +24,12 @@ Exchange of insurance companies to attract new customers
      * `DATABASE_NAME`
      * `DATABASE_USER`
      * `DATABASE_PASSWORD`
-     * `DATABASE_HOST`
-     * `DATABASE_PORT`
    * **PostgreSQL**
      * `POSTGRES_USER`
      * `POSTGRES_PASSWORD`
      * `POSTGRES_DB`
-   * **RabbitMQ**
-     * `RABBITMQ_USER`
-     * `RABBITMQ_PASSWORD`
-   * **Celery**
-     * `CELERY_BROKER_URL`
    * **Mailing**
      * `UNISENDER_KEY`
      * `COMPANY_NAME`
      * `COMPANY_EMAIL`
-   * **Elasticsearch**
-     * `ELASTICSEARCH_HOST`
 #### 3. Run `docker-compose up --build`

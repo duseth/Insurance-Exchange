@@ -84,7 +84,7 @@ DATABASES = {
         "NAME": os.getenv("DATABASE_NAME", "name"),
         "USER": os.getenv("DATABASE_USER", "user"),
         "PASSWORD": os.getenv("DATABASE_PASSWORD", "password"),
-        "HOST": os.getenv("DATABASE_HOST", "localhost"),
+        "HOST": os.getenv("DATABASE_HOST", "db"),
         "PORT": os.getenv("DATABASE_PORT", "5432"),
     }
 }
@@ -151,11 +151,11 @@ CELERY_BROKER_TRANSPORT = os.getenv("CELERY_BROKER_TRANSPORT", "redis")
 
 ELASTICSEARCH_DSL = {
     "default": {
-        "hosts": os.getenv("ELASTICSEARCH_HOST", "localhost:9200")
+        "hosts": os.getenv("ELASTICSEARCH_HOST", "elasticsearch:9200")
     }
 }
 
 # Redis server configuration
 
-REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+REDIS_HOST = os.getenv("REDIS_HOST", "redis")
 REDIS_PORT = os.getenv("REDIS_PORT", 6379)
