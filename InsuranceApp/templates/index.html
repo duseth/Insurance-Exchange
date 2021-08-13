@@ -12,7 +12,7 @@
     <form class="form-inline" method="GET">
         <label class="sr-only" for="query">Search</label>
         <input type="text" class="col-8 input-group mb-2 mr-sm-2" id="query" name="query" placeholder="Search"
-               value="{{ query|default_if_none:'' }}">
+               value="{{ request.GET.query|default_if_none:'' }}">
         <button type="submit" class="col-3 btn btn-light mb-2">Search</button>
 
         <label class="sr-only" for="type">Type</label>

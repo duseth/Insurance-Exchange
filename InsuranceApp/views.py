@@ -24,7 +24,6 @@ def index(request: HttpRequest) -> HttpResponse:
 
     return render(request, "index.html", {
         "services": services,
-        "query": request.GET.get("query"),
         "companies": Company.objects.values_list("pk", "name"),
         "types": InsuranceType.objects.values_list("pk", "name"),
         "validities": ValidityType.objects.values_list("pk", "name")
