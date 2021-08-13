@@ -15,8 +15,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      rabbit:
-        condition: service_healthy
       elasticsearch:
         condition: service_healthy
       redis:
@@ -31,14 +29,6 @@ services:
     healthcheck:
       test: pg_isready
 
-  rabbit:
-    restart: always
-    image: rabbitmq:3-management
-    ports:
-      - 15672:15672
-    healthcheck:
-      test: rabbitmq-diagnostics -q ping
-
   celery:
     restart: always
     build: .
@@ -52,7 +42,7 @@ services:
         condition: service_started
       web:
         condition: service_started
-      rabbit:
+      redis:
         condition: service_healthy
 
   redis:

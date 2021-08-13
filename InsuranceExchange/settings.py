@@ -144,7 +144,8 @@ MESSAGE_TAGS = {
 
 # Celery configuration
 
-CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "amqp://localhost")
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
+CELERY_BROKER_TRANSPORT = os.getenv("CELERY_BROKER_TRANSPORT", "redis")
 
 # Elasticsearch configuration
 
