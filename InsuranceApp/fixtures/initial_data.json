@@ -27,7 +27,7 @@
         "model": "InsuranceApp.insurancetype",
         "pk": 3,
         "fields": {
-            "name": "Real estate",
+            "name": "Property",
             "risks": [
                 "fire",
                 "explosion",
@@ -44,6 +44,18 @@
                 "accident",
                 "health care",
                 "trauma"
+            ]
+        }
+    },
+    {
+        "model": "InsuranceApp.insurancetype",
+        "pk": 5,
+        "fields": {
+            "name": "Liability",
+            "risks": [
+                "life",
+                "health",
+                "property"
             ]
         }
     },
