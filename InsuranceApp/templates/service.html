@@ -19,8 +19,8 @@
         <div class="col-sm">
             <ul class="list-group">
                 <li class="list-group-item">Company: {{ service.company.name }}</li>
-                <li class="list-group-item">Price: {{ service.price }}</li>
-                <li class="list-group-item">Coverage amount: {{ service.coverage_amount }}</li>
+                <li class="list-group-item">Price: ${{ service.price|floatformat }}</li>
+                <li class="list-group-item">Coverage amount: ${{ service.coverage_amount|floatformat }}</li>
                 <li class="list-group-item">Validity: {{ service.validity.name }}</li>
                 <li class="list-group-item">Type: {{ service.type.name }}</li>
                 <li class="list-group-item">Risks: {{ service.type.risks|join:", " }}</li>

@@ -31,7 +31,7 @@
         <tr>
             <td><a href="{% url 'InsuranceApp:service' service.id %}">{{ service.title }}</a></td>
             <td>{{ service.type.name }}</td>
-            <td>{{ service.price }}</td>
+            <td>${{ service.price|floatformat }}</td>
             <td>{{ service.company.name }}</td>
             <td><a class="btn btn-secondary" href="{% url 'InsuranceApp:update_service' service.id %}">Update</a></td>
             <td><a class="btn btn-danger" href="{% url 'InsuranceApp:delete_service' service.id %}">Delete</a></td>
