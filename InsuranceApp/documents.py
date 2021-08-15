@@ -7,6 +7,7 @@ from django_elasticsearch_dsl.registries import registry
 @registry.register_document
 class ServiceDocument(Document):
     """Model-like class for persisting documents in elasticsearch"""
+    title = fields.TextField(fielddata=True)
     type = fields.ObjectField(properties={
         "id": fields.IntegerField(),
         "name": fields.TextField(),
@@ -35,7 +36,7 @@ class ServiceDocument(Document):
     class Django:
         """Django model associated with this Document"""
         model = Service
-        fields = ["title", "description", "coverage_amount", "price"]
+        fields = ["description", "coverage_amount", "price"]
 
         # Service will be re-saved when InsuranceType, ValidityType or Company is updated
         related_models = [InsuranceType, ValidityType, Company]

@@ -37,7 +37,10 @@ def search_by_services(request: HttpRequest) -> QuerySet:
     for field, term in filters.items():
         services = services.filter("term", **{field: term})
 
-    return services.to_queryset()
+    sort: Optional[str] = request.GET.get("sort")
+    services = services.sort(sort) if sort is not None else services.sort()
+
+    return services[0:services.count()].to_queryset()
 
 
 def convert_response_to_notification(response: Response) -> Dict[str, str]:

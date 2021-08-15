@@ -9,6 +9,7 @@ from typing import Optional, List
 from django.conf import settings
 from django.contrib import messages
 from django.db.models import QuerySet
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.http import HttpRequest, HttpResponse
 from django.contrib.auth.forms import AuthenticationForm
@@ -22,8 +23,20 @@ def index(request: HttpRequest) -> HttpResponse:
     """Index view handler responsible to get 'service' objects by query and filters"""
     services: QuerySet = search_by_services(request)
 
+    paginator = Paginator(services, 10)
+    page_number = request.GET.get("page")
+
+    sorting: Dict[str, str] = {
+        "title": "Title: A to Z",
+        "-title": "Title: Z to A",
+        "price": "Price: Low to High",
+        "-price": "Price: High to Low"
+    }
+
     return render(request, "index.html", {
-        "services": services,
+        "found": len(services),
+        "sorting": sorting.items(),
+        "services": paginator.get_page(page_number),
         "companies": Company.objects.values_list("pk", "name"),
         "types": InsuranceType.objects.values_list("pk", "name"),
         "validities": ValidityType.objects.values_list("pk", "name")
@@ -196,8 +209,10 @@ def service_response(request: HttpRequest, service_id: int) -> HttpResponse:
         redis.incr(f"services/{service_id}")
         response_form: ResponseForm = ResponseForm()
 
+    service = Service.objects.get(pk=service_id)
+
     return render(request, "service.html", {
-        "service": Service.objects.get(pk=service_id),
-        "views": int(redis.get(f"services/{service_id}")) if request.user.is_authenticated else None,
-        "response_form": response_form
+        "service": service,
+        "response_form": response_form,
+        "views": int(redis.get(f"services/{service_id}")) if service.company.id == request.user.id else None
     })
