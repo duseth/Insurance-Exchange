@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <!-- Header -->
 {% include "_header.html" %}
+{% load tags %}
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -12,12 +13,26 @@
     <form class="form-inline" method="GET">
         <label class="sr-only" for="query">Search</label>
         <input type="text" class="col-8 input-group mb-2 mr-sm-2" id="query" name="query" placeholder="Search"
-               value="{{ query|default_if_none:'' }}">
+               value="{{ request.GET.query|default_if_none:'' }}">
         <button type="submit" class="col-3 btn btn-light mb-2">Search</button>
+
+        <label class="sr-only" for="sort">Sort</label>
+        <select class="form-control mb-2 mr-sm-2" id="sort" name="sort" onchange="this.form.submit()">
+            {% if request.GET.sort == None %}
+            <option disabled selected value style="display:none">Sort by: Featured</option>
+            {% endif %}
+            {% for value, name in sorting %}
+            {% if request.GET.sort == value %}
+            <option value="{{ value }}" selected>{{ name }}</option>
+            {% else %}
+            <option value="{{ value }}">{{ name }}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
 
         <label class="sr-only" for="type">Type</label>
         <select class="form-control mb-2 mr-sm-2" id="type" name="type" onchange="this.form.submit()">
-            {% if type == None %}
+            {% if request.GET.type == None %}
             <option disabled selected value style="display:none">Type</option>
             {% endif %}
             {% for value, name in types %}
@@ -31,7 +46,7 @@
 
         <label class="sr-only" for="validity">Validity</label>
         <select class="form-control mb-2 mr-sm-2" id="validity" name="validity" onchange="this.form.submit()">
-            {% if validity == None %}
+            {% if request.GET.validity == None %}
             <option disabled selected value style="display:none">Validity</option>
             {% endif %}
             {% for value, name in validities %}
@@ -45,7 +60,7 @@
 
         <label class="sr-only" for="company">Company</label>
         <select class="form-control mb-2 mr-sm-2" id="company" name="company" onchange="this.form.submit()">
-            {% if company == None %}
+            {% if request.GET.company == None %}
             <option disabled selected value style="display:none">Company</option>
             {% endif %}
             {% for value, name in companies %}
@@ -59,11 +74,12 @@
     </form>
     <!-- Services -->
     {% if services|length > 0 %}
-    <h5 class="font-weight-bold">Found {{ services|length }} services</h5>
+    <h5 class="font-weight-bold">Found {{ found }} services</h5>
     <table class="table">
         <thead class="thead-light">
         <tr>
             <th scope="col">Title</th>
+            <th scope="col">Validity</th>
             <th scope="col">Type</th>
             <th scope="col">Price</th>
             <th scope="col">Company</th>
@@ -73,13 +89,34 @@
         {% for service in services %}
         <tr>
             <td><a href="{% url 'InsuranceApp:service' service.id %}">{{ service.title }}</a></td>
+            <td>{{ service.validity.name }}</td>
             <td>{{ service.type.name }}</td>
-            <td>{{ service.price }}</td>
+            <td>${{ service.price|floatformat }}</td>
             <td>{{ service.company.name }}</td>
         </tr>
         {% endfor %}
         </tbody>
     </table>
+    <!-- Pagination -->
+    <ul class="pagination justify-content-center">
+        {% if services.has_previous %}
+        <li class="page-item"><a class="page-link" href="?{% param_replace page=1 %}">&laquo; 1</a></li>
+        <li class="page-item">
+            <a class="page-link" href="?{% param_replace page=services.previous_page_number %}">Previous</a>
+        </li>
+        {% endif %}
+        <li class="page-link text-dark">{{ services.number }} of {{ services.paginator.num_pages }}</li>
+        {% if services.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?{% param_replace page=services.next_page_number %}">Next</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?{% param_replace page=services.paginator.num_pages %}">
+                {{ services.paginator.num_pages }} &raquo;
+            </a>
+        </li>
+        {% endif %}
+    </ul>
     {% else %}
     <h4>There are no services at the moment</h4>
     {% endif %}

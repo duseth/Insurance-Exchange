@@ -7,6 +7,7 @@ from elasticsearch_dsl.query import MultiMatch
 
 
 def search_by_services(request: HttpRequest) -> QuerySet:
+    """Service for receive all services by query and filter terms"""
     services = ServiceDocument.search()
 
     query: str = request.GET.get("query")
@@ -27,18 +28,23 @@ def search_by_services(request: HttpRequest) -> QuerySet:
             )
         )
 
-    filters = __get_filters_from_request(request, "type", "validity", "company")
+    filters: Dict[str, Optional[int]] = dict()
+    for field in ["type", "validity", "company"]:
+        parameter = request.GET.get(field)
+        if parameter is not None:
+            filters.update({f"{field}.id": int(parameter)})
+
     for field, term in filters.items():
         services = services.filter("term", **{field: term})
 
-    return services.to_queryset()
+    sort: Optional[str] = request.GET.get("sort")
+    services = services.sort(sort) if sort is not None else services.sort()
 
-
-def get_services_by_company(company_id: int) -> QuerySet:
-    return ServiceDocument.search().filter("term", **{"company.id": company_id}).to_queryset()
+    return services[0:services.count()].to_queryset()
 
 
 def convert_response_to_notification(response: Response) -> Dict[str, str]:
+    """Service for convert 'Response' object to 'dict' with client information"""
     return {
         "email": response.email,
         "phone": response.phone,
@@ -49,12 +55,6 @@ def convert_response_to_notification(response: Response) -> Dict[str, str]:
     }
 
 
-def __get_filters_from_request(request: HttpRequest, *args: str) -> Dict[str, Optional[int]]:
-    """Function that parse filter parameters from request"""
-    filters: Dict[str, Optional[int]] = dict()
-    for arg in args:
-        parameter = request.GET.get(arg)
-        if parameter is not None:
-            filters.update({f"{arg}.id": int(parameter)})
-
-    return filters
+def get_services_by_company(company_id: int) -> QuerySet:
+    """Service for receive all services by 'company_id'"""
+    return ServiceDocument.search().filter("term", **{"company.id": company_id}).to_queryset()
