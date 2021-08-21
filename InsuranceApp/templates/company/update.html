@@ -10,19 +10,13 @@
 </head>
 <body>
 <!-- Update profile -->
-{% if user.is_authenticated %}
 <div class="container py-5">
     <h1>Profile</h1>
     <form method="POST">
         {% csrf_token %}
-        {{ update_form|crispy }}
+        {{ form|crispy }}
         <button class="btn btn-primary" type="submit">Update</button>
     </form>
 </div>
-{% else %}
-<div class="container py-5">
-    <h3 class="text-center">Please <a href="{% url 'InsuranceApp:login' %}">log in</a>!</h3>
-</div>
-{% endif %}
 </body>
 </html>

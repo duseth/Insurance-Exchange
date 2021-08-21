@@ -31,7 +31,7 @@
         <div class="col-sm">
             <form method="POST">
                 {% csrf_token %}
-                {{ response_form|crispy }}
+                {{ form|crispy }}
                 <button class="btn btn-primary" type="submit">Submit</button>
             </form>
         </div>
