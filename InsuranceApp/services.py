@@ -2,7 +2,7 @@ from django.http import HttpRequest
 from django.db.models import QuerySet
 from .documents import ServiceDocument
 from .models import Response
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 from elasticsearch_dsl.query import MultiMatch
 
 
@@ -41,18 +41,6 @@ def search_by_services(request: HttpRequest) -> QuerySet:
     services = services.sort(sort) if sort is not None else services.sort()
 
     return services[0:services.count()].to_queryset()
-
-
-def convert_response_to_notification(response: Response) -> Dict[str, str]:
-    """Service for convert 'Response' object to 'dict' with client information"""
-    return {
-        "email": response.email,
-        "phone": response.phone,
-        "full_name": response.full_name,
-        "company": response.company.email,
-        "service": response.service.title,
-        "response_date": response.response_date,
-    }
 
 
 def get_services_by_company(company_id: int) -> QuerySet:
