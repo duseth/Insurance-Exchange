@@ -14,7 +14,7 @@
         <a class="btn btn-primary" href="{% url 'InsuranceApp:create_service' %}">Create service</a>
     </div>
 
-    {% if services|length > 0 %}
+    {% if page_obj|length > 0 %}
     <table class="table">
         <thead class="thead-light">
         <tr>
@@ -27,20 +27,41 @@
         </tr>
         </thead>
         <tbody>
-        {% for service in services %}
+        {% for service in page_obj %}
         <tr>
             <td><a href="{% url 'InsuranceApp:service' service.id %}">{{ service.title }}</a></td>
             <td>{{ service.type.name }}</td>
             <td>${{ service.price|floatformat }}</td>
             <td>{{ service.company.name }}</td>
             <td><a class="btn btn-secondary" href="{% url 'InsuranceApp:update_service' service.id %}">Update</a></td>
-            <td><a class="btn btn-danger" href="{% url 'InsuranceApp:delete_service' service.id %}">Delete</a></td>
+            <td><a class="btn btn-danger" href="{% url 'InsuranceApp:delete_service' service.id %}"
+                   onclick="return confirm('Are you sure?');">Delete</a></td>
         </tr>
         {% endfor %}
         </tbody>
     </table>
+    <!-- Pagination -->
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page=1">&laquo; 1</a></li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        </li>
+        {% endif %}
+        <li class="page-link text-dark">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</li>
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
+                {{ page_obj.paginator.num_pages }} &raquo;
+            </a>
+        </li>
+        {% endif %}
+    </ul>
     {% else %}
-    <h4>You don't have any service</h4>
+    <h4>There are no services at the moment</h4>
     {% endif %}
 </div>
 </body>

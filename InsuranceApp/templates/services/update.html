@@ -15,7 +15,7 @@
     <h1>Update service</h1>
     <form method="POST">
         {% csrf_token %}
-        {{ update_form|crispy }}
+        {{ form|crispy }}
         <button class="btn btn-primary" type="submit">Update</button>
     </form>
 </div>

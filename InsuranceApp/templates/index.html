@@ -73,7 +73,7 @@
         </select>
     </form>
     <!-- Services -->
-    {% if services|length > 0 %}
+    {% if page_obj|length > 0 %}
     <h5 class="font-weight-bold">Found {{ found }} services</h5>
     <table class="table">
         <thead class="thead-light">
@@ -86,7 +86,7 @@
         </tr>
         </thead>
         <tbody>
-        {% for service in services %}
+        {% for service in page_obj %}
         <tr>
             <td><a href="{% url 'InsuranceApp:service' service.id %}">{{ service.title }}</a></td>
             <td>{{ service.validity.name }}</td>
@@ -99,20 +99,20 @@
     </table>
     <!-- Pagination -->
     <ul class="pagination justify-content-center">
-        {% if services.has_previous %}
+        {% if page_obj.has_previous %}
         <li class="page-item"><a class="page-link" href="?{% param_replace page=1 %}">&laquo; 1</a></li>
         <li class="page-item">
-            <a class="page-link" href="?{% param_replace page=services.previous_page_number %}">Previous</a>
+            <a class="page-link" href="?{% param_replace page=page_obj.previous_page_number %}">Previous</a>
         </li>
         {% endif %}
-        <li class="page-link text-dark">{{ services.number }} of {{ services.paginator.num_pages }}</li>
-        {% if services.has_next %}
+        <li class="page-link text-dark">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</li>
+        {% if page_obj.has_next %}
         <li class="page-item">
-            <a class="page-link" href="?{% param_replace page=services.next_page_number %}">Next</a>
+            <a class="page-link" href="?{% param_replace page=page_obj.next_page_number %}">Next</a>
         </li>
         <li class="page-item">
-            <a class="page-link" href="?{% param_replace page=services.paginator.num_pages %}">
-                {{ services.paginator.num_pages }} &raquo;
+            <a class="page-link" href="?{% param_replace page=page_obj.paginator.num_pages %}">
+                {{ page_obj.paginator.num_pages }} &raquo;
             </a>
         </li>
         {% endif %}
